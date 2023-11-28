@@ -1,12 +1,12 @@
 package servicereply
 
 import (
-	"github.com/orchestd/servicereply/commonError"
-	"github.com/orchestd/servicereply/status"
-	"github.com/orchestd/servicereply/types"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/orchestd/servicereply/commonError"
+	"github.com/orchestd/servicereply/status"
+	"github.com/orchestd/servicereply/types"
 	"github.com/pkg/errors"
 	"runtime"
 	"strings"
@@ -176,6 +176,11 @@ func (se *BaseServiceError) GetSource() string {
 }
 
 func NewServiceError(errType *types.ReplyType, err error, userMessage string, runTimeCaller int) ServiceReply {
+	sr, ok := err.(ServiceReply)
+	if ok {
+		return sr
+	}
+
 	runTimeCaller += 1
 	pc, fn, line, _ := runtime.Caller(runTimeCaller)
 	sourceArr := strings.Split(fn, "/")
@@ -198,6 +203,18 @@ func NewServiceError(errType *types.ReplyType, err error, userMessage string, ru
 func NewBadRequestError(userMessage string) ServiceReply {
 	et := types.BadRequestErrorReplyType
 	return NewServiceError(&et, nil, userMessage, 1)
+}
+
+type ValidationErrors map[string]string
+
+func NewValidationError(validationErrors ValidationErrors) ServiceReply {
+	valueMap := ValuesMap{}
+	for field, ve := range validationErrors {
+		val := make(map[string]string)
+		val["key"] = ve
+		valueMap[field] = val
+	}
+	return NewRejectedReply("validation").WithReplyValues(valueMap)
 }
 
 func NewInternalServiceError(err error) ServiceReply {
