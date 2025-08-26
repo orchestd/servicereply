@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"runtime"
+	"strings"
+	"text/template"
+
 	"github.com/orchestd/servicereply/commonError"
 	"github.com/orchestd/servicereply/status"
 	"github.com/orchestd/servicereply/types"
 	"github.com/pkg/errors"
-	"runtime"
-	"strings"
-	"text/template"
 )
 
 type ServiceReply interface {
@@ -18,7 +19,9 @@ type ServiceReply interface {
 	WithError(error) ServiceReply
 	GetError() error
 	WithReplyValues(ValuesMap) ServiceReply
+	WithTraceValues(ValuesMap) ServiceReply
 	GetReplyValues() ValuesMap
+	GetTraceValues() ValuesMap
 	WithLogMessage(string) ServiceReply
 	GetLogMessage() *string
 	WithLogValues(ValuesMap) ServiceReply
@@ -41,6 +44,7 @@ type BaseServiceError struct {
 	errorType   *types.ReplyType
 	userMessage string
 	extraData   ValuesMap
+	traceData   ValuesMap
 }
 type Message struct {
 	Id     string                 `json:"id"`
@@ -115,6 +119,12 @@ func (se *BaseServiceError) Parse(err string) (Response, error) {
 	}
 	return parsedSr, nil
 }
+
+func (se *BaseServiceError) WithTraceValues(traceData ValuesMap) ServiceReply {
+	se.traceData = traceData
+	return se
+}
+
 func (se *BaseServiceError) WithReplyValues(extraData ValuesMap) ServiceReply {
 	se.extraData = extraData
 	return se
@@ -123,6 +133,11 @@ func (se *BaseServiceError) WithReplyValues(extraData ValuesMap) ServiceReply {
 func (se *BaseServiceError) GetReplyValues() ValuesMap {
 	return se.extraData
 }
+
+func (se *BaseServiceError) GetTraceValues() ValuesMap {
+	return se.traceData
+}
+
 func (se *BaseServiceError) IsSuccess() bool {
 	if se == nil || se.GetErrorType() == nil {
 		return true
@@ -260,8 +275,13 @@ func NewMessage(userMessage string) ServiceReply {
 func NewValidationMandatoryRejectedReply(fields []string) ServiceReply {
 	return NewBadRequestError("IsMandatory").WithReplyValues(ValuesMap{"fields": fields})
 }
+
 func NewWithReplyHeadersValues(values map[string]string) ServiceReply {
 	return NewNil().WithReplyValues(map[string]interface{}{"replyHeadersValues": values})
+}
+
+func NewWithTraceValues(values ValuesMap) ServiceReply {
+	return NewNil().WithTraceValues(values)
 }
 
 func NewNil() ServiceReply {
