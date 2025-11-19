@@ -9,13 +9,15 @@ const (
 	BadRequestErrorReplyType      ReplyType = "badRequest"
 
 	//401
-	ServiceAuthErrorReplyType  ReplyType = "serviceAuth"
+	ServiceAuthErrorReplyType ReplyType = "serviceAuth"
+
+	//503
+	ServiceUnavailableErrorReplyType ReplyType = "serviceUnavailable"
 
 	//Logic
-	NoMatchReplyType           ReplyType = "noMatch"
-	SuccessReplyType           ReplyType ="success"
-	RejectedReplyType          ReplyType = "rejected"
+	NoMatchReplyType  ReplyType = "noMatch"
+	SuccessReplyType  ReplyType = "success"
+	RejectedReplyType ReplyType = "rejected"
 )
-
 
 type ReplyType string
