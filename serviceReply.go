@@ -262,6 +262,12 @@ func NewUnavailableError(err error) ServiceReply {
 	return NewServiceError(&et, err, commonError.InternalServiceError, 1)
 }
 
+func NewErrorByStatus(err error) ServiceReply {
+	s := err.Error()
+	et := status.GetTypeByStatus(status.Status(s))
+	return NewServiceError(&et, err, commonError.InternalServiceError, 1)
+}
+
 func NewRejectedReply(userMessage string) ServiceReply {
 	et := types.RejectedReplyType
 	return NewServiceError(&et, nil, userMessage, 1)
