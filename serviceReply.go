@@ -257,6 +257,11 @@ func NewServiceAuthError(userMessage string) ServiceReply {
 	return NewServiceError(&et, nil, userMessage, 1)
 }
 
+func NewUnavailableError(err error) ServiceReply {
+	et := types.ServiceUnavailableErrorReplyType
+	return NewServiceError(&et, err, commonError.InternalServiceError, 1)
+}
+
 func NewRejectedReply(userMessage string) ServiceReply {
 	et := types.RejectedReplyType
 	return NewServiceError(&et, nil, userMessage, 1)

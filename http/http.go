@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/orchestd/servicereply/types"
 	"net/http"
+
+	"github.com/orchestd/servicereply/types"
 )
 
 var httpErrors = map[types.ReplyType]int{
@@ -12,7 +13,8 @@ var httpErrors = map[types.ReplyType]int{
 	types.IoErrorReplyType:              http.StatusInternalServerError,
 	types.NetworkErrorReplyType:         http.StatusInternalServerError,
 
-	types.ServiceAuthErrorReplyType: http.StatusUnauthorized,
+	types.ServiceAuthErrorReplyType:        http.StatusUnauthorized,
+	types.ServiceUnavailableErrorReplyType: http.StatusServiceUnavailable,
 
 	types.RejectedReplyType: http.StatusOK,
 	types.NoMatchReplyType:  http.StatusOK,

@@ -11,7 +11,8 @@ var statusMap = map[types.ReplyType]Status{
 	types.IoErrorReplyType:              ErrorStatus,
 	types.NetworkErrorReplyType:         ErrorStatus,
 
-	types.ServiceAuthErrorReplyType: UnauthorizedStatus,
+	types.ServiceAuthErrorReplyType:        UnauthorizedStatus,
+	types.ServiceUnavailableErrorReplyType: UnavailableStatus,
 
 	types.RejectedReplyType: RejectedStatus,
 	types.NoMatchReplyType:  NoMatchStatus,
@@ -22,6 +23,7 @@ type Status string
 
 const (
 	UnauthorizedStatus Status = "unauthorized"
+	UnavailableStatus  Status = "unavailable"
 	RejectedStatus     Status = "rejected"
 	NoMatchStatus      Status = "noMatch"
 	ErrorStatus        Status = "error"
@@ -36,16 +38,17 @@ func GetStatus(et *types.ReplyType) Status {
 	return statusMap[*et]
 }
 
-var typesMap = map[Status]types.ReplyType {
-	InvalidStatus : types.BadRequestErrorReplyType,
+var typesMap = map[Status]types.ReplyType{
+	InvalidStatus: types.BadRequestErrorReplyType,
 
-	ErrorStatus : types.InternalServiceErrorReplyType,
+	ErrorStatus: types.InternalServiceErrorReplyType,
 
-	UnauthorizedStatus : types.ServiceAuthErrorReplyType,
+	UnauthorizedStatus: types.ServiceAuthErrorReplyType,
+	UnavailableStatus:  types.ServiceUnavailableErrorReplyType,
 
-	RejectedStatus : types.RejectedReplyType,
-	NoMatchStatus : types.NoMatchReplyType,
-	SuccessStatus : types.SuccessReplyType,
+	RejectedStatus: types.RejectedReplyType,
+	NoMatchStatus:  types.NoMatchReplyType,
+	SuccessStatus:  types.SuccessReplyType,
 }
 
 func GetTypeByStatus(s Status) types.ReplyType {
