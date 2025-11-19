@@ -52,5 +52,8 @@ var typesMap = map[Status]types.ReplyType{
 }
 
 func GetTypeByStatus(s Status) types.ReplyType {
-	return typesMap[s]
+	if val, ok := typesMap[s]; ok {
+		return val
+	}
+	return types.InternalServiceErrorReplyType
 }
